@@ -32,6 +32,19 @@ sh test.sh separate
 
 All nodes will renegotiate routing among each other and everything continues to work as expected.
 
+### CLI Wallet examples
+
+Simply issue the following command:
+
+```sh
+sh test.sh wallet
+```
+
+This will drop you in a REPL where you can unlock a wallet and execute certain functions.
+1. When prompted for wallet name, simply enter "testwallet".
+2. When prompted for password, simply hit the ```RETURN``` button (empty passphrase)
+3. Execute ```print_address``` in the REPL to ensure the unlock was successful, it should print the address ```52c4ba9a2237cc9e03192cd448e8e5e9a17211dd```.
+
 ### Stop test
 
 Simply issue the following command:
