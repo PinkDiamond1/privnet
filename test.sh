@@ -101,6 +101,12 @@ case $1 in
         echo "bootstrap container stopped"
     ;;
 
+    "wallet")
+        docker run --rm -it --network $QAN_NETWORK \
+            --entrypoint "/usr/bin/wallet_cli" \
+            --name "qan_wallet" $QAN_IMAGE -r "http://"
+    ;;
+
     # STOP TEST
     'stop')
 
@@ -124,6 +130,13 @@ case $1 in
 
             # STOP AND REMOVE IT
             remove_container "qan_node_bootstrap"
+        fi
+
+        # IF THERE IS A WALLET CONTAINER
+        if docker container inspect "qan_wallet" > /dev/null 2>&1; then
+
+            # STOP AND REMOVE IT
+            remove_container "qan_wallet"
         fi
 
         # REMOVE NETWORK AS WELL
