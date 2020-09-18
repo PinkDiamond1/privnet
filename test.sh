@@ -77,13 +77,10 @@ case $1 in
 
             # START NEW INSTANCES
             docker container create --name "qan_node_"$i \
+                --network $QAN_NETWORK \
                 --publish $PORTFORWARD --env BOOTSTRAP='nats://qan_node_bootstrap:6222' \
                 $QAN_IMAGE > /dev/null 2>&1
             echo "Created   node qan_node_"$i "container"
-
-            # CONNECT NODE TO DOCKER NETWORK
-            docker network connect $QAN_NETWORK "qan_node_"$i > /dev/null
-            echo "Connected node qan_node_"$i "to the network"
         done
 
         # START DAEMON ON ALL NODES
@@ -101,10 +98,22 @@ case $1 in
         echo "bootstrap container stopped"
     ;;
 
+    # LAUNCH INTERACTIVE WALLET
     "wallet")
+
+        # IF THERE IS NO NODE0, WALLET CAN NOT CONNECT OVER RPC
+        if ! docker container inspect "qan_node_0" > /dev/null 2>&1 ; then
+            echo "wallet was unable to connect to node"
+            exit 1
+        fi
+
+        # GET IP OF RPC
+        RPC_IP=$(docker exec "qan_node_0" ip a | grep inet | grep -v 127 | awk '{print $2}' | cut -d"/" -f1)
+
+        # RUN WALLET BINARY WHICH CONNECTS TO THE RPC IP ON PORT 3000
         docker run --rm -it --network $QAN_NETWORK \
             --entrypoint "/usr/bin/wallet_cli" \
-            --name "qan_wallet" $QAN_IMAGE -r "http://"
+            --name "qan_wallet" $QAN_IMAGE -r "http://"$RPC_IP":3000"
     ;;
 
     # STOP TEST
