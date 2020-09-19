@@ -5,7 +5,7 @@ The bundled ```test.sh``` convenience script will help you out to get up and run
 
 ## How to use
 
-### Start X nodes
+### Start X nodes locally
 
 The below example will:
 
@@ -19,6 +19,26 @@ The below example will:
 ```sh
 sh test.sh start 5
 ```
+
+### Deploy using container orchestration
+
+
+QAN supports deploying to major container orchestrators, such as Docker Swarm.
+
+#### Deploy using Docker Swarm
+
+To deploy a QAN private network to Docker Swarm, first ensure that:
+
+- The machine is a docker swarm **manager** node.
+- There is **at least one worker** node in your swarm cluster.
+
+If above two conditions are satisfied, then you can proceed to deploy by entering the following:
+
+```sh
+bash test.sh deploy swarm
+```
+
+This will deploy the stack template defined in ```deploy/docker-swarm/stack.yml```.
 
 ### Separate bootstrap node
 
