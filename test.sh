@@ -62,6 +62,18 @@ case $1 in
                     echo "deployed to docker swarm successfully!"
                 fi
             ;;
+
+            # KUBERNETES
+            'kubernetes'|'kube'|'k8s')
+
+                # IF KUBECTL IS NOT EXECUTABLE
+                if [ ! -x $(which kubectl) ]; then
+
+                    # THROW EXECPTION
+                    echo "kubectl command is not executable, exiting!"
+                    exit 1
+                fi
+            ;;
         esac
     ;;
 
