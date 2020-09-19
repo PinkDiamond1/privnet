@@ -1,0 +1,40 @@
+version: "3"
+services:
+
+  bootnode:
+    image: qanplatform/privnet
+    networks:
+      - nats
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: on-failure
+
+  node:
+    image: qanplatform/privnet
+    environment:
+        BOOTSTRAP: nats://bootnode:6222
+    networks:
+      - nats
+      - rpc
+    ports:
+      - 3000:3000
+    volumes:
+      - rocksdb:/home/qand/.local/share/qand/
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.role == worker]
+      restart_policy:
+        condition: always
+
+networks:
+  nats:
+      driver: overlay
+  rpc:
+      driver: overlay
+
+volumes:
+  rocksdb:

@@ -32,6 +32,39 @@ fi
 # COMMAND SELECTOR
 case $1 in
 
+    # DEPLOYMENT HELPERS
+    'deploy')
+
+        # CHECK IF ORCHESTRATOR SPECIFIED
+        case $2 in
+
+            # DOCKER SWARM
+            'swarm')
+
+                # IF DOCKER IS NOT EXECUTABLE
+                if ! docker node ls > /dev/null 2>&1; then
+
+                    # THROW EXECPTION
+                    echo "docker swarm is not set up or this node is not a manager, exiting!"
+                    exit 1
+                fi
+
+                # IF STACK FILE DOESN'T EXIST
+                STACKFILE=$(pwd)"/deploy/docker-swarm/stack.yml"
+                if [ ! -f $STACKFILE ]; then
+
+                    # THROW EXECPTION
+                    echo "docker stack descriptor not found, exiting!"
+                    exit 1
+                fi
+
+                if docker stack deploy -c $STACKFILE "qan"; then
+                    echo "deployed to docker swarm successfully!"
+                fi
+            ;;
+        esac
+    ;;
+
     # START TEST
     'start')
 
