@@ -73,6 +73,15 @@ case $1 in
                     echo "kubectl command is not executable, exiting!"
                     exit 1
                 fi
+
+                # APPLY MANIFESTS
+                kubectl apply -f "deploy/kubernetes/namespace.yaml"
+                kubectl apply -f "deploy/kubernetes/pv.yaml"
+                kubectl apply -f "deploy/kubernetes/pvc.yaml"
+                kubectl apply -f "deploy/kubernetes/service.yaml"
+                kubectl apply -f "deploy/kubernetes/deployment.yaml"
+                kubectl wait -f "deploy/kubernetes/deployment.yaml" --for "condition=Available"
+                kubectl apply -f "deploy/kubernetes/daemonset.yaml"
             ;;
         esac
     ;;
@@ -145,6 +154,13 @@ case $1 in
 
     # LAUNCH INTERACTIVE WALLET
     "wallet")
+
+        # IF A KUBERNETES DEPLOYMENT IS ACTIVE, LAUNCH WALLET IN DS POD
+        if [ ! -x $(which kubectl) ]; then
+            if [ kubectl get ns "qan" ]; then
+                kubectl exec -it -n "qan" "ds/qan-privnet" -c "qan-node" wallet_cli
+            fi
+        fi
 
         # IF THERE IS NO NODE0, WALLET CAN NOT CONNECT OVER RPC
         if ! docker container inspect "qan_node_0" > /dev/null 2>&1 ; then
