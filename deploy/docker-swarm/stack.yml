@@ -22,7 +22,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - rocksdb:/home/qand/.local/share/qand/
+      - rocksdb:/home/qand/.local/share/qand/db
     deploy:
       mode: global
       placement:
