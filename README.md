@@ -40,6 +40,20 @@ bash test.sh deploy swarm
 
 This will deploy the stack template defined in ```deploy/docker-swarm/stack.yml```.
 
+#### Deploy using Kubernetes
+
+To deploy a QAN private network to Kubernetes, first ensure that:
+
+- You have ```kubectl``` installed locally
+
+If above condition is met, then you can proceed to deploy by entering the following:
+
+```sh
+bash test.sh deploy kubernetes
+```
+
+This will deploy the kubernetes manifests defined in ```deploy/kubernetes/*.yaml```.
+
 ### Separate bootstrap node
 
 All nodes are initialized by connecting them to the bootstrap node of the private network.
