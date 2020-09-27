@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: qan
+  name: qan-bootnode
+  labels:
+    app: qan-privnet
+spec:
+  selector:
+    app: qan-privnet
+    component: qan-bootnode
+  ports:
+    - name: nats
+      protocol: TCP
+      port: 6222
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: qan
+  name: qan-node
+  labels:
+    app: qan-privnet
+spec:
+  selector:
+    app: qan-privnet
+    component: qan-node
+  ports:
+    - name: rpc
+      protocol: TCP
+      port: 3000

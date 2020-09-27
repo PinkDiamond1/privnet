@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: qan
+  name: qan-pv-claim
+  labels:
+    app: qan-privnet
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  volumeName: qan-pv
+  resources:
+    requests:
+      storage: 1Gi

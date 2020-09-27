@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qan-privnet
+  namespace: qan
+  labels:
+    app: qan-privnet
+    component: qan-bootnode
+spec:
+  selector:
+    matchLabels:
+      app: qan-privnet
+      component: qan-bootnode
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: qan-privnet
+        component: qan-bootnode
+    spec:
+      containers:
+      - name: qan-bootnode
+        image: qanplatform/privnet

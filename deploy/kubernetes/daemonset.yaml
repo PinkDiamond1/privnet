@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: qan-privnet
+  namespace: qan
+  labels:
+    app: qan-privnet
+    component: qan-node
+spec:
+  selector:
+    matchLabels:
+      app: qan-privnet
+      component: qan-node
+  template:
+    metadata:
+      labels:
+        app: qan-privnet
+        component: qan-node
+    spec:
+      tolerations:
+      # this toleration is to have the daemonset runnable on master nodes
+      # remove it if your masters can't run pods
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      initContainers:
+        - name: volume-mount
+          image: busybox
+          command: ["sh", "-c", "chown -R 1000:1000 /home/qand/.local/share/qand/db"]
+          volumeMounts:
+          - name: rocksdb
+            mountPath: /home/qand/.local/share/qand/db
+      containers:
+      - name: qan-node
+        image: qanplatform/privnet
+        env:
+        - name: BOOTSTRAP
+          value: nats://qan-bootnode:6222
+        resources:
+          limits:
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - name: rocksdb
+          mountPath: /home/qand/.local/share/qand/db
+      terminationGracePeriodSeconds: 60
+      volumes:
+      - name: rocksdb
+        persistentVolumeClaim:
+          claimName: qan-pv-claim
