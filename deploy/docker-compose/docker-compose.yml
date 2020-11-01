@@ -1,0 +1,31 @@
+version: "3.1"
+
+services:
+
+  postgres:
+    image: postgres:13.0-alpine
+    container_name: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=qan
+    restart: always
+
+  backend:
+    image: qanplatform/explorer-backend
+    environment:
+      - DB_HOST=postgres
+      - DEBUG=false
+
+  frontend:
+    image: qanplatform/explorer-frontend
+    environment:
+      - USE_FAIL2BAN=no
+    depends_on:
+      - backend
+    ports:
+      - 8080:8080
+
+  node:
+    image: img.qan.dev/silur/qanplatform:bin-webhook
+    environment:
+      - WEBHOOK_ADDR=http://backend:8000/explorer
