@@ -38,6 +38,51 @@ case $1 in
         # CHECK IF ORCHESTRATOR SPECIFIED
         case $2 in
 
+            # DOCKER COMPOSE
+            'compose')
+
+                # IF DOCKER-COMPOSE IS NOT EXECUTABLE
+                if ! which "docker-compose" > /dev/null; then
+
+                    # THROW EXECPTION
+                    echo "docker-compose command is not executable, exiting!"
+                    exit 1
+                fi
+
+                # IF IMAGE NOT PRESENT ON SYSTEM YET
+                if ! docker image ls | grep img.qan.dev/silur/qanplatform | grep bin-webhook; then
+
+                    # ENSURE ACCESS KEY PROVIDED
+                    if [ -z $3 ]; then
+                        echo "you must supply your beta access key as a third argument:"
+                        echo "test.sh deploy compose 192A4209-F2CC-4F81-9F17-E8C4FBC89D74"
+                        exit 1
+                    fi
+
+                    # ENSURE ACCESS KEY VALID
+                    ACCESS_KEY=$(echo $3 | tr '[:upper:]' '[:lower:]')
+                    if ! curl -fsI "https://privnet.qanplatform.com/$ACCESS_KEY.tar.gz" > /dev/null; then
+                        echo "your access key '$ACCESS_KEY' is not valid!"
+                        exit 1
+                    fi
+
+                    # DOWNLOAD AND LOAD DOCKER IMAGE
+                    curl -S "https://privnet.qanplatform.com/$ACCESS_KEY.tar.gz" | docker image load
+                fi
+
+                # IF COMPOSE FILE DOESN'T EXIST
+                COMPOSEFILE=$(pwd)"/deploy/docker-compose/docker-compose.yml"
+                if [ ! -f $COMPOSEFILE ]; then
+
+                    # THROW EXECPTION
+                    echo "docker-compose descriptor not found, exiting!"
+                    exit 1
+                fi
+
+                # START DOCKER-COMPOSE
+                docker-compose -f $COMPOSEFILE -p "QAN" up
+            ;;
+
             # DOCKER SWARM
             'swarm')
 
