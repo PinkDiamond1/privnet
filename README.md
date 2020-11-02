@@ -23,7 +23,22 @@ sh test.sh start 5
 ### Deploy using container orchestration
 
 
-QAN supports deploying to major container orchestrators, such as Docker Swarm.
+QAN supports deploying to major container orchestrators, such as Docker Compose, Docker Swarm and Kubernetes.
+
+#### Deploy using Docker Compose
+
+To deploy a QAN private network locally with Docker Compose, first ensure that:
+
+- The "docker-compose" command is executable on your system.
+- You have a valid Access Key for BETA testing.
+
+If above two conditions are satisfied, then you can proceed to deploy by entering the following:
+
+```sh
+bash test.sh deploy compose "192A4209-F2CC-4F81-9F17-E8C4FBC89D74"
+```
+
+This will deploy the stack template defined in ```deploy/docker-swarm/stack.yml```.
 
 #### Deploy using Docker Swarm
 
