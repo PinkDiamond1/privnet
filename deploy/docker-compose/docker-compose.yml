@@ -25,6 +25,6 @@ services:
       - 8080:8080
 
   node:
-    image: img.qan.dev/silur/qanplatform:bin-webhook
+    image: img.qan.dev/pub/privnet-demo:UUID
     environment:
       - WEBHOOK_ADDR=http://backend:8000/explorer

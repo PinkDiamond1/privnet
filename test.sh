@@ -50,7 +50,7 @@ case $1 in
                 fi
 
                 # IF IMAGE NOT PRESENT ON SYSTEM YET
-                if ! docker image ls | grep img.qan.dev/silur/qanplatform | grep bin-webhook; then
+                if ! docker image ls | grep "img.qan.dev/pub/privnet-demo" | grep bin-webhook; then
 
                     # ENSURE ACCESS KEY PROVIDED
                     if [ -z $3 ]; then
@@ -59,15 +59,9 @@ case $1 in
                         exit 1
                     fi
 
-                    # ENSURE ACCESS KEY VALID
+                    # LOAD DOCKER IMAGE
                     ACCESS_KEY=$(echo $3 | tr '[:upper:]' '[:lower:]')
-                    if ! curl -fsI "https://privnet.qanplatform.com/$ACCESS_KEY.tar.gz" > /dev/null; then
-                        echo "your access key '$ACCESS_KEY' is not valid!"
-                        exit 1
-                    fi
-
-                    # DOWNLOAD AND LOAD DOCKER IMAGE
-                    curl -S "https://privnet.qanplatform.com/$ACCESS_KEY.tar.gz" | docker image load
+                    docker image pull "img.qan.dev/pub/privnet-demo:"$ACCESS_KEY
                 fi
 
                 # IF COMPOSE FILE DOESN'T EXIST
@@ -80,7 +74,7 @@ case $1 in
                 fi
 
                 # START DOCKER-COMPOSE
-                docker-compose -f $COMPOSEFILE -p "QAN" up
+                cat $COMPOSEFILE | sed -e "s/UUID/$ACCESS_KEY/g" | docker-compose -f - -p "QAN" up
             ;;
 
             # DOCKER SWARM
