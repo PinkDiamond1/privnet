@@ -25,6 +25,7 @@ services:
       - 8080:8080
 
   node:
+    restart: always
     image: img.qan.dev/pub/privnet-demo:UUID
     environment:
       - WEBHOOK_ADDR=http://backend:8000/explorer
