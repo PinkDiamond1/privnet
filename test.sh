@@ -74,7 +74,7 @@ case $1 in
                 fi
 
                 # START DOCKER-COMPOSE
-                cat $COMPOSEFILE | sed -e "s/UUID/$ACCESS_KEY/g" | docker-compose -f - -p "QAN" up
+                cat $COMPOSEFILE | sed -e "s/UUID/$ACCESS_KEY/g" | docker-compose -f - -p "QAN" up -d
             ;;
 
             # DOCKER SWARM
