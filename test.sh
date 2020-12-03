@@ -49,21 +49,6 @@ case $1 in
                     exit 1
                 fi
 
-                # IF IMAGE NOT PRESENT ON SYSTEM YET
-                if ! docker image ls | grep "img.qan.dev/pub/privnet-demo" | grep bin-webhook; then
-
-                    # ENSURE ACCESS KEY PROVIDED
-                    if [ -z $3 ]; then
-                        echo "you must supply your beta access key as a third argument:"
-                        echo "test.sh deploy compose 192A4209-F2CC-4F81-9F17-E8C4FBC89D74"
-                        exit 1
-                    fi
-
-                    # LOAD DOCKER IMAGE
-                    ACCESS_KEY=$(echo $3 | tr '[:upper:]' '[:lower:]')
-                    docker image pull "img.qan.dev/pub/privnet-demo:"$ACCESS_KEY
-                fi
-
                 # IF COMPOSE FILE DOESN'T EXIST
                 COMPOSEFILE=$(pwd)"/deploy/docker-compose/docker-compose.yml"
                 if [ ! -f $COMPOSEFILE ]; then
@@ -74,7 +59,7 @@ case $1 in
                 fi
 
                 # START DOCKER-COMPOSE
-                cat $COMPOSEFILE | sed -e "s/UUID/$ACCESS_KEY/g" | docker-compose -f - -p "QAN" up -d
+                docker-compose -f $COMPOSEFILE -p "QAN" up -d
             ;;
 
             # DOCKER SWARM
