@@ -1,31 +1,30 @@
-version: "3.1"
+version: "3.8"
 
 services:
 
-  postgres:
+  db:
     image: postgres:13.0-alpine
-    environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=qan
     restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: qan
 
   backend:
-    image: qanplatform/explorer-backend
+    image: qanplatform/explorer-backend:v1-0-2-privnet
+    restart: always
     environment:
-      - DB_HOST=postgres
-      - DEBUG=false
-
+      DB_HOST: db
+  
   frontend:
-    image: qanplatform/explorer-frontend
+    image: qanplatform/explorer-frontend:v1-0-1-privnet
+    restart: always
     environment:
-      - USE_FAIL2BAN=no
-    depends_on:
-      - backend
+      BACKEND: backend:8000
     ports:
-      - 80:8080
+      - 80:80
 
   node:
+    image: qanplatform/privnet:v1-0-4
     restart: always
-    image: img.qan.dev/pub/privnet-demo:4f6ff8e2-680c-4004-ba66-0a072f3698d9
     environment:
-      - WEBHOOK_ADDR=http://backend:8000/explorer
+      BACKEND: backend:8000
